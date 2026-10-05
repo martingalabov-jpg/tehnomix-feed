@@ -1,6 +1,6 @@
 # Tehnomix - OpenAI Ads product feed
 
-`20261005-Tehnomix-OpenAI-ProductFeed.csv` is built from https://www.tehnomix.bg/media/feed/google-new.csv
+`tehnomix-openai-feed.csv` is built from https://www.tehnomix.bg/media/feed/google-new.csv
 by `build_openai_feed.py` (OpenAI file-upload product spec, ads feed).
 
     python3 build_openai_feed.py <google-new.csv> <out.csv>
