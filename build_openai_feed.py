@@ -6,6 +6,7 @@ import csv, collections, re, sys
 
 SRC, OUT = sys.argv[1], sys.argv[2]
 SELLER, SELLER_URL = "Tehnomix", "https://www.tehnomix.bg"
+MIN_PRICE = 50.0  # EUR; tested against the sale price when lower than the list price
 HEADER = ["item_id", "title", "description", "url", "brand", "seller_name", "image_url", "availability",
           "price", "sale_price", "product_category", "condition", "seller_url",
           "is_eligible_search", "is_ads_eligible", "is_eligible_checkout"]
@@ -106,11 +107,16 @@ for r in src:
         continue
     s, _ = money(r["Sale price"]) if r["Sale price"] else (0, cur)
     sale = fmt(s, cur) if 0 < s < p else ""
+    if cur != "EUR":
+        raise SystemExit("Unexpected currency %s for %s - output NOT written" % (cur, r["ID"]))
+    if (s if 0 < s < p else p) <= MIN_PRICE:
+        drop["<= 50 EUR"] += 1
+        continue
     rows.append([r["ID"], title[:150], clean_desc(r["item description"], title)[:5000], r["Final URL"], brand, SELLER,
                  r["Image URL"], "in_stock", fmt(p, cur), sale, r["Item category"], "new", SELLER_URL,
                  "true", "true", "false"])
 
-if len(rows) < 3000:
+if len(rows) < 1500:
     raise SystemExit("Only %d rows - output NOT written" % len(rows))
 with open(OUT, "w", newline="", encoding="utf-8") as f:
     w = csv.writer(f)

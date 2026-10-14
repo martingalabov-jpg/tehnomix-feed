@@ -12,7 +12,7 @@ try {
     $out = python -I build_openai_feed.py google-new.csv tehnomix-openai-feed.csv 2>&1
     if ($LASTEXITCODE -ne 0) { throw "converter failed: $out" }
     $rows = python -I -c "import csv;print(sum(1 for _ in csv.DictReader(open('tehnomix-openai-feed.csv',encoding='utf-8-sig'))))"
-    if ([int]$rows -lt 3000) { git checkout -- tehnomix-openai-feed.csv; throw "only $rows products - refusing to publish" }
+    if ([int]$rows -lt 1500) { git checkout -- tehnomix-openai-feed.csv; throw "only $rows products - refusing to publish" }
     (Get-Date).ToUniversalTime().ToString('yyyy-MM-ddTHH:mm:ssZ') | Set-Content last_run.txt -Encoding ascii
     git add tehnomix-openai-feed.csv last_run.txt
     git diff --cached --quiet
